@@ -1,0 +1,43 @@
+name: Docker Image CI
+
+on:
+  schedule:
+    - cron: '0 9 * * *' # Runs at 9:00 AM UTC daily
+
+jobs:
+  build-and-run:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build the Docker image
+        run: docker build . --file Dockerfile --tag my-image-name:latest
+
+      - name: Run Docker container
+        env:
+          FROM_EMAIL_PASSWORD: ${{ secrets.FROM_EMAIL_PASSWORD }}
+          FROM_EMAIL: ${{ secrets.FROM_EMAIL }}
+          FROM_EMAIL_SMTP: ${{ secrets.FROM_EMAIL_SMTP }}
+          FROM_EMAIL_SMTP_PORT: ${{ secrets.FROM_EMAIL_SMTP_PORT }}
+          BCC_EMAIL: ${{ secrets.BCC_EMAIL }}
+          TO_EMAIL_A: ${{ secrets.TO_EMAIL_A }}
+          EMAIL_A_NAME: ${{ secrets.EMAIL_A_NAME }}
+          TO_EMAIL_B: ${{ secrets.TO_EMAIL_B }}
+          EMAIL_B_NAME: ${{ secrets.EMAIL_B_NAME }}
+          TO_EMAIL_C: ${{ secrets.TO_EMAIL_C }}
+          EMAIL_C_NAME: ${{ secrets.EMAIL_C_NAME }}
+        run: |
+          docker run --rm \
+            -e FROM_EMAIL_PASSWORD=${{ secrets.FROM_EMAIL_PASSWORD }} \
+            -e FROM_EMAIL=${{ secrets.FROM_EMAIL }} \
+            -e FROM_EMAIL_SMTP=${{ secrets.FROM_EMAIL_SMTP }} \
+            -e FROM_EMAIL_SMTP_PORT=${{ secrets.FROM_EMAIL_SMTP_PORT }} \
+            -e BCC_EMAIL=${{ secrets.BCC_EMAIL }} \
+            -e TO_EMAIL_A=${{ secrets.TO_EMAIL_A }} \
+            -e EMAIL_A_NAME=${{ secrets.EMAIL_A_NAME }} \
+            -e TO_EMAIL_B=${{ secrets.TO_EMAIL_B }} \
+            -e EMAIL_B_NAME=${{ secrets.EMAIL_B_NAME }} \
+            -e TO_EMAIL_C=${{ secrets.TO_EMAIL_C }} \
+            -e EMAIL_C_NAME=${{ secrets.EMAIL_C_NAME }} \
+            auto_email:latest
