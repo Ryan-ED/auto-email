@@ -1,0 +1,7 @@
+version: '3.8'
+
+services:
+  nintendo_auto_email:
+    build: .
+    env_file: .env
+    command: python auto_email.py
